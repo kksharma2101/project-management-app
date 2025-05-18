@@ -11,6 +11,7 @@ export default function TaskForm() {
 
   const onSubmit = async (data: any) => {
     data.assignedToId = session.data?.user.id;
+    data.user = session?.data?.user.name;
     const res = await createTask.mutate({
       ...data,
       deadline: new Date(data.deadline).toISOString(),
@@ -60,7 +61,7 @@ export default function TaskForm() {
         </div>
 
         <div className="flex flex-col items-start">
-          <span className="opacity-40 px-1">Deadline</span>
+          <span className="px-1 opacity-40">Deadline</span>
           <input
             type="datetime-local"
             {...register("deadline")}

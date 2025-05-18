@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { Menu, X, UserCircle2 } from "lucide-react";
+import { Menu, X, UserCircle2, ArrowBigRight } from "lucide-react";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -21,8 +21,8 @@ const Navbar = () => {
 
           {/* Desktop Menu */}
           <div className="hidden items-center space-x-6 md:flex">
-            <Link href="/" className="hover:text-blue-600">
-              Home
+            <Link href="/dashboard" className="hover:text-blue-600">
+              Dashboard
             </Link>
             <Link href="/" className="hover:text-blue-600">
               About
@@ -41,10 +41,15 @@ const Navbar = () => {
                 </div>
                 <div className="absolute right-0 z-10 mt-0 hidden w-48 rounded border bg-white shadow-md group-hover:block">
                   <div className="px-4 py-2 text-sm text-gray-700">
+                    <Link
+                      href={"/settings/profile"}
+                      className="flex justify-between font-bold hover:text-blue-600"
+                    >
+                      Profile Setting <ArrowBigRight />
+                    </Link>
                     <p>
                       <strong>Name:</strong> {session.user.name}
                     </p>
-                    <p>{session.user.email}</p>
                   </div>
                   <div className="flex w-full justify-center">
                     <Link
@@ -81,8 +86,8 @@ const Navbar = () => {
       {/* Mobile Menu */}
       {isOpen && (
         <div className="space-y-2 px-4 pb-4 md:hidden">
-          <Link href="/" onClick={toggleMenu} className="block">
-            Home
+          <Link href="/dashboard" onClick={toggleMenu} className="block">
+            Dashboard
           </Link>
           <Link href="/" onClick={toggleMenu} className="block">
             About

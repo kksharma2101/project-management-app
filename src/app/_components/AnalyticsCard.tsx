@@ -1,6 +1,6 @@
 interface Props {
   label: string;
-  value: string;
+  value: number;
 }
 
 export default function AnalyticsCard({ label, value }: Props) {

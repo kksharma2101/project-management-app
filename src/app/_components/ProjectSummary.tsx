@@ -1,5 +1,9 @@
+import { api } from "@/trpc/react";
+
 export default function ProjectSummary() {
   // You can fetch and map project summaries here
+  const { data: tasks } = api.task.getAllTasks.useQuery();
+
   const projects = [
     { name: "Marketing Website", status: "In Progress" },
     { name: "AI Dashboard", status: "Done" },
@@ -8,13 +12,13 @@ export default function ProjectSummary() {
 
   return (
     <div>
-      <h2 className="text-xl font-semibold mb-2">📁 Projects</h2>
+      <h2 className="mb-2 text-xl font-semibold">📁 Projects</h2>
       <div className="space-y-2">
-        {projects.map((proj) => (
-          <div key={proj.name} className="p-4 bg-muted rounded-lg shadow-sm">
+        {tasks?.map((proj) => (
+          <div key={proj?.id} className="bg-muted rounded-lg p-4 shadow-sm">
             <div className="flex justify-between">
-              <p>{proj.name}</p>
-              <span className="text-xs font-medium">{proj.status}</span>
+              <p>{proj?.title}</p>
+              <span className="text-xs font-medium">{proj?.status}</span>
             </div>
           </div>
         ))}
