@@ -25,7 +25,7 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="flex h-full w-full items-center justify-center">
+    <div className="flex h-lvh w-full items-center justify-center">
       <form
         onSubmit={handleSignup}
         className="m-3 flex min-w-2xs flex-col gap-4 p-3"

@@ -6,6 +6,7 @@ import { Geist } from "next/font/google";
 import { TRPCReactProvider } from "@/trpc/react";
 import { SessionProvider } from "next-auth/react";
 import { auth } from "@/server/auth";
+import Navbar from "./_components/Navbar";
 
 export const metadata: Metadata = {
   title: "Project Management App",
@@ -27,7 +28,10 @@ export default async function RootLayout({
     <html lang="en" className={`${geist.variable}`}>
       <body>
         <TRPCReactProvider>
-          <SessionProvider session={session}>{children}</SessionProvider>
+          <SessionProvider session={session}>
+            {session && <Navbar />}
+            {children}
+          </SessionProvider>
         </TRPCReactProvider>
       </body>
     </html>
