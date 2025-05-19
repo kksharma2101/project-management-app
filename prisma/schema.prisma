@@ -69,7 +69,7 @@ model Task {
   deadline    DateTime
   priority    Priority
   tags        String[]
-  status      Status   @default(TODO)
+  status      Status   @default(PENDING)
   assignedTo  User?    @relation("AssignedTasks", fields: [assignedToId], references: [id])
   assignedToId String?
   createdAt   DateTime @default(now())
@@ -83,7 +83,7 @@ enum Priority {
 }
 
 enum Status {
-  TODO
+  PENDING
   IN_PROGRESS
-  DONE
+  COMPLETED
 }

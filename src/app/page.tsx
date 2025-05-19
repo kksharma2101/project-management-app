@@ -7,12 +7,13 @@ export default async function Home() {
   const session: any = await auth();
 
   if (!session) {
-    redirect("/login");
+    redirect("login");
   }
 
   return (
     <HydrateClient>
-      <main className="flex min-h-screen flex-col items-center justify-start bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
+      {/* bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white" */}
+      <main className="flex min-h-screen flex-col items-center justify-start">
         <TaskList />
       </main>
     </HydrateClient>

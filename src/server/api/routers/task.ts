@@ -7,6 +7,7 @@ export const taskRouter = createTRPCRouter({
       title: z.string(),
       description: z.string(),
       deadline: z.string(),
+      status: z.enum(["PENDING", "IN_PROGRESS", "COMPLETED"]),
       priority: z.enum(["LOW", "MEDIUM", "HIGH"]),
       tags: z.array(z.string()),
       assignedToId: z.string().optional(),
@@ -17,6 +18,7 @@ export const taskRouter = createTRPCRouter({
           title: input.title,
           description: input.description,
           deadline: new Date(input.deadline),
+          status: input.status,
           priority: input.priority,
           tags: input.tags,
           assignedToId: input.assignedToId,
@@ -30,4 +32,43 @@ export const taskRouter = createTRPCRouter({
       orderBy: { createdAt: "desc" },
     });
   }),
+  // 
+  update: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        data: z.object({
+          title: z.string().min(1).optional(),
+          description: z.string().optional(),
+          status: z
+            .enum(["PENDING", "IN_PROGRESS", "COMPLETED"])
+            .optional(),
+          priority: z.enum(["LOW", "MEDIUM", "HIGH"]).optional(),
+          deadline: z.date().optional(),
+          tags: z.array(z.string()),
+          assignedToId: z.string().optional(),
+        }),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { id, data } = input;
+      return ctx.db.task.update({
+        where: { id },
+        data: {
+          title: data.title,
+          description: data.description,
+          deadline: new Date(data.deadline),
+          status: data.status,
+          priority: data.priority,
+          tags: data.tags,
+          assignedToId: data.assignedToId,
+        },
+
+      });
+    }),
+
+  delete: protectedProcedure.input(z.string()).mutation(async ({ ctx, input }) => {
+    return ctx.db.task.delete({ where: { id: input } });
+  }),
+
 });
