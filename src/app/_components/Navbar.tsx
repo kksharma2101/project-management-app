@@ -97,6 +97,12 @@ const Navbar = () => {
           </Link>
           {session?.user ? (
             <div className="border-t pt-2">
+              <Link
+                href={"/settings/profile"}
+                className="flex justify-between font-bold hover:text-blue-600"
+              >
+                Profile Setting <ArrowBigRight />
+              </Link>
               <p className="text-sm">
                 Signed in as <strong>{session.user.email}</strong>
               </p>

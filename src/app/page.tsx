@@ -7,7 +7,7 @@ export default async function Home() {
   const session: any = await auth();
 
   if (!session) {
-    redirect("login");
+    redirect("/login");
   }
 
   return (

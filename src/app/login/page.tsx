@@ -25,7 +25,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex my-auto h-lvh w-full items-center justify-center">
+    <div className="my-auto flex h-lvh w-full items-center justify-center">
       <form
         onSubmit={handleLogin}
         className="m-3 flex min-w-2xs flex-col gap-4 p-3"
@@ -52,7 +52,7 @@ export default function LoginPage() {
         </div>
         <button
           type="submit"
-          className="cursor-pointer rounded-md bg-green-600 p-2 text-white hover:bg-green-500 font-bold"
+          className="cursor-pointer rounded-md bg-green-600 p-2 font-bold text-white hover:bg-green-500"
         >
           Login
         </button>

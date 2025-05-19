@@ -4,7 +4,7 @@ import { api } from "@/trpc/react";
 export default function TaskList() {
   const { data: tasks, isLoading } = api.task.getAllTasks.useQuery();
 
-  if (isLoading) return <p className="text-center">Loading...</p>;
+  if (isLoading) return <p className="text-center my-auto">Loading...</p>;
 
   return (
     <div className="grid gap-4 p-4 sm:grid-cols-2">

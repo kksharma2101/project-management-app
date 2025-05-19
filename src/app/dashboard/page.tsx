@@ -10,7 +10,9 @@ import { api } from "@/trpc/react";
 
 export default function DashboardPage() {
   const { data: session } = useSession();
-  const { data: tasks } = api.task.getAllTasks.useQuery();
+  const { data: tasks, isLoading } = api.task.getAllTasks.useQuery();
+
+  if (isLoading) return <p className="my-auto text-center">Loading...</p>;
 
   return (
     <div className="mx-auto max-w-7xl space-y-6 p-6">
