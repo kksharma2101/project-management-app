@@ -1,11 +1,25 @@
 "use client";
 import { api } from "@/trpc/react";
 import { Tags, Users } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function TaskList() {
   const { data: tasks, isLoading } = api.task.getAllTasks.useQuery();
+  const { mutate: update } = api.task.update.useMutation();
+  const { mutate: deleteTask } = api.task.deleteTask.useMutation({
+    onSuccess: () => {
+      void api.useUtils().task.getAllTasks.invalidate();
+    },
+  });
+
+  const router = useRouter();
 
   if (isLoading) return <p className="my-auto text-center">Loading...</p>;
+
+  const handleUpdate = ({ id }:any) => {
+    // update({ ...task });
+    router.push(`/task/${id}/update`)
+  };
 
   return (
     <div className="grid w-full gap-4 p-4 md:grid-cols-2">
@@ -62,10 +76,16 @@ export default function TaskList() {
           </div>
 
           <div className="mt-2 flex items-center justify-between">
-            <button className="cursor-pointer rounded-md bg-blue-400 px-3 py-1 hover:bg-blue-300">
+            <button
+              className="cursor-pointer rounded-md bg-blue-400 px-3 py-1 hover:bg-blue-300"
+              onClick={() => handleUpdate(task?.id)}
+            >
               Update
             </button>
-            <button className="cursor-pointer rounded-md bg-red-400 px-3 py-1 hover:bg-red-300">
+            <button
+              className="cursor-pointer rounded-md bg-red-400 px-3 py-1 hover:bg-red-300"
+              onClick={() => deleteTask(task.id)}
+            >
               Delete
             </button>
           </div>

@@ -57,7 +57,7 @@ export const taskRouter = createTRPCRouter({
         data: {
           title: data.title,
           description: data.description,
-          deadline: new Date(data.deadline),
+          deadline: data.deadline,
           status: data.status,
           priority: data.priority,
           tags: data.tags,
@@ -67,7 +67,7 @@ export const taskRouter = createTRPCRouter({
       });
     }),
 
-  delete: protectedProcedure.input(z.string()).mutation(async ({ ctx, input }) => {
+  deleteTask: protectedProcedure.input(z.string()).mutation(async ({ ctx, input }) => {
     return ctx.db.task.delete({ where: { id: input } });
   }),
 
