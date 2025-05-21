@@ -1,10 +1,6 @@
 "use client";
 import { useForm } from "react-hook-form";
-import { api } from "@/trpc/react";
-import { type Task } from "@prisma/client";
 import type { TaskFormData } from "@/types/task";
-// import { useSession } from "next-auth/react";
-// import { useRouter } from "next/navigation";
 
 //
 

@@ -1,10 +1,8 @@
 "use client";
 import TaskForm from "@/app/_components/TaskForm";
 import { api } from "@/trpc/react";
-import type { TaskFormData } from "@/types/task";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 
 export default function CreateTaskPage() {
   // const [isOpen, setIsOpen] = useState(false);

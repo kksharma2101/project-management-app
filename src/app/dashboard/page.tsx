@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import AnalyticsCard from "../_components/AnalyticsCard";
 import DeadlineList from "../_components/DeadLineList";
 import ProjectSummary from "../_components/ProjectSummary";
-import TaskBoard from "../_components/TaskBoard";
+// import TaskBoard from "../_components/TaskBoard";
 import TeamActivity from "../_components/TeamActivity";
 import { api } from "@/trpc/react";
 
@@ -33,7 +33,7 @@ export default function DashboardPage() {
       <ProjectSummary />
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-        <TaskBoard />
+        {/* <TaskBoard /> */}
         <DeadlineList />
       </div>
 
