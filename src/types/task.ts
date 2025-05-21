@@ -7,16 +7,26 @@ export type TaskFormData = {
     priority: "LOW" | "MEDIUM" | "HIGH";
     tags: string[];
     status: "PENDING" | "IN_PROGRESS" | "COMPLETED";
-    assignedToId?: string | undefined
+    assignedToId: string | undefined
 };
 
 export type TaskWithRelations = Task & {
-    user: {
-        id: string;
-        name: string | null;
-    };
+    id?: string;
     assignedTo?: {
-        id: string;
         name: string | null;
-    } | null;
+        id: string;
+        email: string | null;
+        password: string | null; // Consider if password should be here for a 'relation' type
+        bio: string | null;
+        emailVerified: Date | null;
+        createdAt: Date;
+    } | null; // Ensure assignedTo also correctly reflects its nullable nature
+    user?: string | null; // <--- CHANGE THIS LINE: Now explicitly allows null
+    title?: string;
+    description?: string;
+    deadline?: string | any;
+    priority?: "LOW" | "MEDIUM" | "HIGH";
+    tags?: string[];
+    status?: "PENDING" | "IN_PROGRESS" | "COMPLETED";
+    assignedToId?: string | null;
 };

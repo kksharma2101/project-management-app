@@ -14,6 +14,7 @@ type TaskFormBaseProps = {
   isLoading: boolean;
   onCancel?: () => void;
   submitButtonText?: string;
+  headingText: string;
 };
 
 export default function TaskForm({
@@ -22,13 +23,18 @@ export default function TaskForm({
   isLoading,
   onCancel,
   submitButtonText = "Submit",
+  headingText,
 }: TaskFormBaseProps) {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<TaskFormData>({
-    defaultValues,
+    defaultValues: {
+      title: "",
+      description: "",
+      ...defaultValues,
+    },
   });
 
   //   const { register, handleSubmit }: any = useForm();
@@ -51,8 +57,10 @@ export default function TaskForm({
   // import { type TaskFormData } from "~/types/task";
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="mx-auto mt-5">
-      <h1 className="mb-8 border-b text-center font-bold">Add New Task</h1>
+    <form onSubmit={handleSubmit(onSubmit)} className="mx-auto mt-5 px-5">
+      <h1 className="mb-8 border-b text-center text-2xl font-semibold">
+        {headingText}
+      </h1>
       <div className="mx-auto flex flex-col items-start justify-center gap-8 sm:grid sm:grid-cols-2">
         <div className="w-full">
           <input
@@ -66,6 +74,11 @@ export default function TaskForm({
           <input
             type="datetime-local"
             {...register("deadline")}
+            defaultValue={
+              defaultValues?.deadline
+                ? new Date(defaultValues.deadline).toDateString()
+                : undefined
+            }
             className="w-full cursor-pointer rounded-sm border p-2"
           />
           <span className="px-1 opacity-40">Deadline</span>
@@ -129,7 +142,7 @@ export default function TaskForm({
           <button
             type="button"
             onClick={onCancel}
-            className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
+            className="cursor-pointer rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
             disabled={isLoading}
           >
             Cancel
@@ -137,7 +150,7 @@ export default function TaskForm({
         )}
         <button
           type="submit"
-          className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
+          className="cursor-pointer rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
           disabled={isLoading}
         >
           {isLoading ? (
