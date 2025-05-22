@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { api } from "@/trpc/react";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import type { UserDetails } from "@/types/task";
 
 export default function UserProfileForm() {
   const { register, handleSubmit, reset } = useForm();
@@ -14,13 +15,13 @@ export default function UserProfileForm() {
     if (user) {
       reset({
         name: user?.name,
-        bio: user.bio || "",
+        bio: user.bio ?? "",
       });
     }
   }, [user, reset]);
 
-  const onSubmit = (data: any) => {
-    updateProfile.mutate(data);
+  const onSubmit = (data: UserDetails) => {
+    updateProfile.mutate({ name: data.name!, bio: data.bio! });
     router.push("/");
   };
 
@@ -28,7 +29,7 @@ export default function UserProfileForm() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="mx-auto">
-      <h1 className="h-full mx-auto mb-8 border-b text-center font-bold">
+      <h1 className="mx-auto mb-8 h-full border-b text-center font-bold">
         Update Your Profile
       </h1>
       <div className="mx-auto flex max-w-2xl flex-col items-center justify-center gap-8">

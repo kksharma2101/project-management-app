@@ -31,11 +31,10 @@ export default function UpdateTask({
         deadline: data.deadline, // Ensure this matches your schema
         status: data.status,
         priority: data.priority,
-        tags: data?.tags || [],
+        tags: Array(data?.tags),
         assignedToId: data.assignedToId,
       },
     });
-    window.location.reload();
   };
 
   return (
@@ -43,11 +42,11 @@ export default function UpdateTask({
       <TaskForm
         defaultValues={{
           title: task?.title,
-          description: task?.description || "",
+          description: task?.description ?? "",
           status: task?.status,
           priority: task?.priority,
           deadline: new Date(task?.deadline).toLocaleString(),
-          tags: task?.tags || [],
+          tags: task?.tags ?? [],
           assignedToId: task?.assignedToId ?? undefined,
         }}
         headingText="Update Task"

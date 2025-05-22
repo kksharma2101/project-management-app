@@ -34,9 +34,7 @@ const Navbar = () => {
             {session?.user ? (
               <div className="group relative">
                 <div className="flex cursor-pointer items-center space-x-2">
-                  <span className="text-sm">
-                    {session.user.name || session.user.email}
-                  </span>
+                  <span className="text-sm">{session.user.name ?? "You"}</span>
                   <UserCircle2 className="text-blue-600" />
                 </div>
                 <div className="absolute right-0 z-10 mt-0 hidden w-48 rounded border bg-white shadow-md group-hover:block">

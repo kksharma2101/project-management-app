@@ -1,14 +1,8 @@
 import { api } from "@/trpc/react";
 
 export default function ProjectSummary() {
-  // You can fetch and map project summaries here
   const { data: tasks } = api.task.getAllTasks.useQuery();
 
-  const projects = [
-    { name: "Marketing Website", status: "In Progress" },
-    { name: "AI Dashboard", status: "Done" },
-    { name: "Mobile App", status: "Pending" },
-  ];
 
   return (
     <div>

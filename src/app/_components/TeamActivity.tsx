@@ -1,8 +1,8 @@
 export default function TeamActivity() {
   const team = [
-    { name: "Rohit Sharma", task: "updated Project Board" },
-    { name: "Ayesha Khan", task: "commented on API module" },
-    { name: "Vikas Mehta", task: "closed Task: Bug Fix" },
+    { name: "Kamal Sharma", task: "updated Project Board" },
+    { name: "Krishna", task: "commented on API module" },
+    { name: "EasySLR", task: "closed Task: Bug Fix" },
   ];
 
   return (

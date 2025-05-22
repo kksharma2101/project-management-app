@@ -3,8 +3,14 @@ import { db } from "@/server/db"
 import { NextResponse } from "next/server"
 import bcrypt from "bcrypt"
 
+interface SignupRequestBody {
+    name: string;
+    email: string;
+    password: string;
+}
+
 export async function POST(req: Request) {
-    const body = await req.json()
+    const body: SignupRequestBody = await req.json()
     const { email, password, name } = body
 
     if (!email || !password || !name) {

@@ -24,4 +24,11 @@ export const userRouter = createTRPCRouter({
                 },
             });
         }),
+
+    getAllUser: protectedProcedure.query(async ({ ctx }) => {
+        return ctx.db.user.findMany({
+            // include: { assignedTo: true },
+            orderBy: { createdAt: "desc" },
+        });
+    })
 });

@@ -58,7 +58,7 @@ export default function TaskList() {
                 </div>
                 <div className="flex items-center gap-1 text-sm text-gray-600">
                   <Users className="h-4 w-4" />
-                  Assigned to: {task?.assignedTo?.name || "N/A"}
+                  Assigned to: {task?.assignedTo?.name ?? "N/A"}
                 </div>
                 <p className="my-2 text-sm text-gray-600">
                   Priority: {task?.priority}

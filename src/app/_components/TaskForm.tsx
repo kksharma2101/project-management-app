@@ -1,6 +1,7 @@
 "use client";
 import { useForm } from "react-hook-form";
 import type { TaskFormData } from "@/types/task";
+import { api } from "@/trpc/react";
 
 //
 
@@ -21,10 +22,12 @@ export default function TaskForm({
   submitButtonText = "Submit",
   headingText,
 }: TaskFormBaseProps) {
+  const { data: user } = api.user.getAllUser.useQuery();
+
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: {},
   } = useForm<TaskFormData>({
     defaultValues: {
       title: "",
@@ -32,25 +35,6 @@ export default function TaskForm({
       ...defaultValues,
     },
   });
-
-  //   const { register, handleSubmit }: any = useForm();
-  //   const createTask = api.task.createTask.useMutation();
-
-  //   const session = useSession();
-  //   const router = useRouter();
-
-  //   const onSubmit = (data: any) => {
-  //     data.assignedToId = session.data?.user.id;
-  //     data.user = session?.data?.user.name;
-  //     createTask.mutate({
-  //       ...data,
-  //       deadline: new Date(data.deadline).toISOString(),
-  //       tags: data.tags.split(",").map((tag: string) => tag.trim()),
-  //     });
-  //     router.push("/");
-  //   };
-
-  // import { type TaskFormData } from "~/types/task";
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="mx-auto mt-5 px-5">
@@ -89,12 +73,16 @@ export default function TaskForm({
         </div>
 
         <div className="w-full">
-          <input
+          <select
             {...register("assignedToId")}
-            placeholder="Assignee User ID (optional)"
-            className="w-full rounded-sm border p-2 hover:border-red-600"
-            disabled
-          />
+            className="w-full cursor-pointer rounded-sm border p-2"
+          >
+            {user?.map((item) => (
+              <option value={item?.id} key={item.id}>
+                {item?.name ?? "N/A"}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div className="w-full">
@@ -127,12 +115,7 @@ export default function TaskForm({
           />
         </div>
       </div>
-      {/* <button
-        type="submit"
-        className="mt-5 w-full cursor-pointer rounded-sm bg-blue-500 px-2 py-1 text-white hover:bg-blue-400"
-      >
-        Create Task
-      </button> */}
+     
       <div className="flex justify-end space-x-3 pt-4">
         {onCancel && (
           <button

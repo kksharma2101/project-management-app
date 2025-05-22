@@ -19,8 +19,8 @@ export default function SignUpPage() {
     if (res.ok) {
       router.push("/login");
     } else {
-      const data = await res.json();
-      alert(data.error || "Failed to sign up");
+      // const data = await res.json();
+      alert("Failed to sign up");
     }
   };
 
@@ -59,7 +59,7 @@ export default function SignUpPage() {
         </div>
         <button
           type="submit"
-          className="cursor-pointer rounded-md bg-blue-500 p-2 text-white hover:bg-blue-400 font-bold"
+          className="cursor-pointer rounded-md bg-blue-500 p-2 font-bold text-white hover:bg-blue-400"
         >
           Sign Up
         </button>
