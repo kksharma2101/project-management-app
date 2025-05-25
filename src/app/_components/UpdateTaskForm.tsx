@@ -31,7 +31,7 @@ export default function UpdateTask({
         deadline: data.deadline, // Ensure this matches your schema
         status: data.status,
         priority: data.priority,
-        tags: Array(data?.tags),
+        tags: data?.tags,
         assignedToId: data.assignedToId,
       },
     });

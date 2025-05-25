@@ -21,7 +21,7 @@ export default function CreateTaskPage() {
       priority: data.priority,
       assignedToId: data.assignedToId,
       deadline: new Date(data.deadline).toDateString(),
-      tags: Array(data.tags),
+      tags: data.tags,
     });
     router.push("/");
   };

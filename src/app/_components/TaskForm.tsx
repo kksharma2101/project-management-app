@@ -30,8 +30,8 @@ export default function TaskForm({
     formState: {},
   } = useForm<TaskFormData>({
     defaultValues: {
-      title: "",
-      description: "",
+      // title: "",
+      // description: "",
       ...defaultValues,
     },
   });
@@ -115,7 +115,7 @@ export default function TaskForm({
           />
         </div>
       </div>
-     
+
       <div className="flex justify-end space-x-3 pt-4">
         {onCancel && (
           <button

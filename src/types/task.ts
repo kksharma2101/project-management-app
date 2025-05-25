@@ -4,9 +4,9 @@ export type TaskFormData = {
     title: string;
     description: string; // This is the problematic part
     deadline: string;
-    user?: string | null;
+    user?: string;
     priority: "LOW" | "MEDIUM" | "HIGH";
-    tags: [];
+    tags: string[];
     status: "PENDING" | "IN_PROGRESS" | "COMPLETED";
     assignedToId: string | undefined
 };
@@ -23,13 +23,23 @@ export interface UserDetails {
 
 export type TaskWithRelations = Task & {
     id?: string;
-    assignedTo?: UserDetails | null,
-    user?: string | null;
+    assignedTo?: UserDetails,
+    user?: string;
     title?: string;
     description?: string;
     deadline?: string
     priority?: string
-    tags?: [];
+    tags?: string[];
     status?: string
     assignedToId?: string | null;
+};
+
+export type TaskFormValues = {
+    title: string;
+    description: string;
+    deadline: string; // ISO string
+    priority: "LOW" | "MEDIUM" | "HIGH";
+    status: "PENDING" | "IN_PROGRESS" | "COMPLETED";
+    tags: string[];
+    assignedToId: string; // user IDs
 };
