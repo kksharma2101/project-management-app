@@ -14,7 +14,7 @@ export async function POST(req: Request) {
     const { email, password, name } = body
 
     if (!email || !password || !name) {
-        return NextResponse.json({ error: "Missing fields" }, { status: 400 })
+        return NextResponse.json({ error: "fields is required" }, { status: 400 })
     }
 
     const existingUser = await db.user.findUnique({ where: { email } })

@@ -56,19 +56,40 @@ export const authConfig = {
   ],
 
   adapter: PrismaAdapter(db),
-  session: { strategy: "jwt" },
   pages: {
     signIn: "/login",
   },
 
+  session: {
+    strategy: "jwt", // needed for jwt-based expiration
+    maxAge: 60 * 60, // 1 hour
+  },
+  jwt: {
+    maxAge: 60 * 60, // optional, 1 hour in seconds
+  },
   callbacks: {
-    async session({ session, token }) {
-      if (token.sub) session.user.id = token.id as string
-      return session
-    },
     async jwt({ token, user }) {
-      if (user) token.id = user.id
-      return token
+      const now = Math.floor(Date.now() / 1000);
+
+      // If user logs in, add custom expiry time
+      if (user) {
+        token.id = user.id;
+        token.exp = now + 60 * 60; // 1 hour expiry
+      }
+
+      // If token exists and is expired, return empty object
+      if (token.exp && now > token.exp) {
+        console.log("Token expired");
+        return {};
+      }
+
+      return token;
     },
+
+    async session({ session, token }) {
+      if (token?.id) session.user.id = token.id as string;
+      if (token?.exp) session.expires = new Date(token.exp * 1000).toISOString() as any;
+      return session;
+    }
   },
 } satisfies NextAuthConfig;

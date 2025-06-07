@@ -7,10 +7,12 @@ import { useState } from "react";
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     const res = await signIn("credentials", {
       redirect: false,
       email,
@@ -23,6 +25,7 @@ export default function LoginPage() {
     } else {
       alert("Invalid credentials");
     }
+    setLoading(false);
   };
 
   return (
@@ -55,7 +58,7 @@ export default function LoginPage() {
           type="submit"
           className="cursor-pointer rounded-md bg-green-600 p-2 font-bold text-white hover:bg-green-500"
         >
-          Login
+          {isLoading ? "Processing..." : "Login"}
         </button>
         <p className="mt-3 text-center text-xs text-gray-500">
           Don&apos;t have an account?
