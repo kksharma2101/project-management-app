@@ -37,20 +37,21 @@ export default function TaskForm({
   });
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="mx-auto mt-5 px-5">
-      <h1 className="mb-8 border-b text-center text-2xl font-semibold">
+    <form onSubmit={handleSubmit(onSubmit)} className="mx-auto p-4">
+      <h1 className="mb-16 text-center text-2xl font-semibold">
         {headingText}
       </h1>
-      <div className="mx-auto flex flex-col items-start justify-center gap-8 sm:grid sm:grid-cols-2">
+      <div className="mx-auto flex flex-col items-start justify-center gap-12 sm:grid sm:grid-cols-2 lg:grid-cols-3">
         <div className="w-full">
+          <label htmlFor="title">Task Title:</label>
           <input
             {...register("title")}
-            placeholder="Task Title"
-            className="w-full rounded-sm border p-2"
+            className="mt-1 w-full rounded-sm border-1 p-2"
           />
         </div>
 
-        <div className="flex w-full items-center">
+        <div className="w-full">
+          <label htmlFor="deadline">Deadline:</label>
           <input
             type="datetime-local"
             {...register("deadline")}
@@ -59,23 +60,23 @@ export default function TaskForm({
                 ? new Date(defaultValues.deadline).toDateString()
                 : undefined
             }
-            className="w-full cursor-pointer rounded-sm border p-2"
+            className="mt-1 w-full cursor-pointer rounded-sm border p-2"
           />
-          <span className="px-1 opacity-40">Deadline</span>
         </div>
 
         <div className="w-full">
+          <label htmlFor="tags">Tags, comma-separated: </label>
           <input
             {...register("tags")}
-            placeholder="Tags (comma-separated)"
-            className="w-full rounded-sm border p-2"
+            className="mt-1 w-full rounded-sm border p-2"
           />
         </div>
 
         <div className="w-full">
+          <label htmlFor="assignedToId">Select User:</label>
           <select
             {...register("assignedToId")}
-            className="w-full cursor-pointer rounded-sm border p-2"
+            className="mt-1 w-full cursor-pointer rounded-sm border p-2"
           >
             {user?.map((item) => (
               <option value={item?.id} key={item.id}>
@@ -86,9 +87,10 @@ export default function TaskForm({
         </div>
 
         <div className="w-full">
+          <label htmlFor="status">Status:</label>
           <select
             {...register("status")}
-            className="w-full cursor-pointer rounded-sm border p-2"
+            className="mt-1 w-full cursor-pointer rounded-sm border p-2"
           >
             <option value="PENDING">Pending</option>
             <option value="IN_PROGRESS">IN_Progress</option>
@@ -97,9 +99,10 @@ export default function TaskForm({
         </div>
 
         <div className="w-full">
+          <label htmlFor="priority">Priority:</label>
           <select
             {...register("priority")}
-            className="w-full cursor-pointer rounded-sm border p-2"
+            className="mt-1 w-full cursor-pointer rounded-sm border p-2"
           >
             <option value="LOW">Low</option>
             <option value="MEDIUM">Medium</option>
@@ -108,10 +111,10 @@ export default function TaskForm({
         </div>
 
         <div className="w-full">
+          <label htmlFor="description">Description:</label>
           <textarea
             {...register("description")}
-            placeholder="Description"
-            className="w-full rounded-sm border p-2"
+            className="mt-1 w-full rounded-sm border p-2"
           />
         </div>
       </div>

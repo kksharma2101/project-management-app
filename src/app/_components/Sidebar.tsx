@@ -5,14 +5,15 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
-  CalendarClock,
-  Car,
-  Users,
   Settings,
   Menu,
   X,
   LogOut,
   LogInIcon,
+  Home,
+  Tags,
+  LocateIcon,
+  Contact2Icon,
 } from "lucide-react";
 import { useSession } from "next-auth/react";
 
@@ -31,10 +32,11 @@ export default function Sidebar() {
   };
 
   const navigation = [
+    { name: "Home", href: "/", icon: Home },
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-    { name: "Bookings", href: "/", icon: CalendarClock },
-    { name: "Vehicles", href: "/", icon: Car },
-    { name: "Customers", href: "/", icon: Users },
+    { name: "Add Task", href: "/task/create-task", icon: Tags },
+    { name: "About", href: "/about", icon: LocateIcon },
+    { name: "Contact", href: "/contact", icon: Contact2Icon },
     { name: "Settings", href: "/settings/profile", icon: Settings },
   ];
 

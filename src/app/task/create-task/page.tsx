@@ -27,7 +27,7 @@ export default function CreateTaskPage() {
   };
 
   return (
-    <div className="mx-auto max-w-3xl px-5">
+    <div className="mx-auto max-w-full px-5 md:ml-20">
       <TaskForm
         onSubmit={handleSubmit}
         isLoading={isPending}
