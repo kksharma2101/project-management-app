@@ -14,7 +14,7 @@ export default function DashboardPage() {
   if (isLoading) return <p className="my-auto text-center">Loading...</p>;
 
   return (
-    <div className="mx-auto max-w-7xl space-y-6 p-6 md:ml-20">
+    <div className="mx-auto mt-16 max-w-7xl space-y-6 p-4 md:mt-0 md:ml-20">
       <div className="mb-6">
         <h1 className="text-3xl font-bold">👋 Welcome, {session?.user.name}</h1>
         <p className="text-muted-foreground">

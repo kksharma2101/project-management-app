@@ -6,8 +6,8 @@ export type TaskFormData = {
     deadline: string;
     user?: string;
     priority: "LOW" | "MEDIUM" | "HIGH";
-    tags: string[];
     status: "PENDING" | "IN_PROGRESS" | "COMPLETED";
+    tags: string[];
     assignedToId: string | undefined
 };
 
@@ -43,3 +43,18 @@ export type TaskFormValues = {
     tags: string[];
     assignedToId: string; // user IDs
 };
+
+export interface TaskDetails {
+    id: string;
+    user: string | null;
+    createdAt: Date;
+    title: string;
+    description: string;
+    deadline: Date;
+    priority: "LOW" | "MEDIUM" | "HIGH";
+    status: "PENDING" | "IN_PROGRESS" | "COMPLETED";
+    tags: string[];
+    assignedToId: string | null;
+    updatedAt: Date;
+    phone?: string
+}

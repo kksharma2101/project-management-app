@@ -54,7 +54,7 @@ export default function Sidebar() {
       <div
         className={`fixed inset-0 z-40 h-full transform ${mobileOpen ? "translate-x-0" : "-translate-x-full"} transition-transform duration-300 ease-in-out md:hidden`}
       >
-        <div className="relative flex h-full w-full max-w-xs flex-col bg-gray-800 text-white shadow-xl">
+        <div className="relative flex h-full w-full max-w-xs flex-col bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white shadow-xl">
           <div className="flex h-16 items-center justify-between border-b border-gray-700 px-6">
             <h2 className="text-xl font-bold">Task-Manage</h2>
             <button onClick={toggleMobileSidebar}>
@@ -104,7 +104,7 @@ export default function Sidebar() {
 
       {/* Sidebar for desktop */}
       <div
-        className={`absolute left-0 z-50 hidden flex-col md:flex ${expanded ? "w-64" : "w-20"} h-full bg-gray-800 text-white transition-all duration-300`}
+        className={`absolute left-0 z-50 hidden flex-col md:flex ${expanded ? "w-64" : "w-20"} h-full bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white transition-all duration-300`}
       >
         <div className="flex h-16 items-center justify-between border-b border-gray-700 px-6">
           {expanded ? (

@@ -33,6 +33,14 @@ export const taskRouter = createTRPCRouter({
     });
   }),
 
+  getTask: protectedProcedure.input(z.object({ id: z.string().cuid().or(z.string().uuid()) })).query(({ ctx, input }) => {
+    return ctx.db.task.findUnique({
+      where: {
+        id: input.id
+      }
+    });
+  }),
+
   updateTask: protectedProcedure
     .input(
       z.object({

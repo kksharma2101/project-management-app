@@ -1,0 +1,180 @@
+"use client";
+
+import { useState } from "react";
+import {
+  User,
+  Phone,
+  Captions,
+  ListCheckIcon,
+  ChartBarStacked,
+  Target,
+  TagsIcon,
+  ReceiptText,
+  UserCheckIcon,
+} from "lucide-react";
+import type { TaskDetails, TaskFormData } from "@/types/task";
+import TaskForm from "./TaskForm";
+import { api } from "@/trpc/react";
+
+interface TaskDetailsProps {
+  task: TaskDetails;
+}
+
+export default function TaskDetails({ task }: TaskDetailsProps) {
+  const [isEditing, setIsEditing] = useState(false);
+
+  // console.log(task.deadline.toLocaleDateString().replaceAll("/", ""));
+
+  const { mutate: updateTask, isPending } = api.task.updateTask.useMutation({
+    onSuccess: () => {
+      void api.useUtils().task.getAllTasks.invalidate();
+    },
+  });
+
+  const handleSubmit = (data: TaskFormData) => {
+    updateTask({
+      id: task.id,
+      data: {
+        title: data.title,
+        description: data.description,
+        deadline: data.deadline,
+        status: data.status,
+        priority: data.priority,
+        tags: data?.tags,
+        assignedToId: data.assignedToId,
+      },
+    });
+    setIsEditing(false);
+  };
+
+  return (
+    <>
+      <div className={isEditing ? "block" : "hidden"}>
+        <TaskForm
+          defaultValues={{
+            title: task?.title,
+            description: task?.description ?? "",
+            status: task?.status,
+            priority: task?.priority,
+            deadline: new Date(task?.deadline).toLocaleString(),
+            tags: task?.tags ?? [],
+            assignedToId: task?.assignedToId ?? undefined,
+          }}
+          onSubmit={handleSubmit}
+          isLoading={isPending}
+          submitButtonText="Save"
+          headingText="Update Task"
+        />
+      </div>
+      <div
+        className={`overflow-hidden rounded-lg bg-white shadow ${!isEditing ? "block" : "hidden"}`}
+      >
+        <div className="flex flex-col border-b border-gray-200 p-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-800">Task</h2>
+            <span className="text-sm text-gray-400">
+              Created on {task.createdAt.toDateString()}
+            </span>
+          </div>
+          <span className="">{task?.status}</span>
+        </div>
+
+        <div className="grid grid-cols-1 gap-8 p-4 md:grid-cols-2">
+          {/* task Details */}
+          <div className="space-y-4">
+            <h3 className="mb-5 w-fit border-b text-lg font-bold">
+              Task Details
+            </h3>
+            <div className="flex items-center gap-4 text-gray-500">
+              <span title="Title">
+                <Captions className="h-6 w-6" />
+              </span>
+              <span className="text-gray-800">{task.title}</span>
+            </div>
+
+            <div className="flex items-center gap-4 text-gray-500">
+              <span title="Priority">
+                <ListCheckIcon className="h-6 w-6" />
+              </span>
+              <span className="text-gray-800">{task.priority}</span>
+            </div>
+
+            <div className="flex items-center gap-4 text-gray-500">
+              <span title="Status">
+                <ChartBarStacked className="h-6 w-6" />
+              </span>
+              <span className="text-gray-800">{task.status}</span>
+            </div>
+
+            <div className="flex items-center gap-4 text-gray-500">
+              <span title="Deadline">
+                <Target className="h-6 w-6" />
+              </span>
+              <span className="text-gray-800">
+                {task.deadline.toLocaleString()}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-4 text-gray-500">
+              <span title="Tags">
+                <TagsIcon className="h-6 w-6" />
+              </span>
+              <span className="text-gray-800">{task.tags}</span>
+            </div>
+
+            <div className="flex items-start gap-4 text-gray-500">
+              <span title="Description">
+                <ReceiptText className="mt-1 h-6 w-6" />
+              </span>
+              <span className="text-justify text-gray-800 md:pr-4">
+                {task.description}
+              </span>
+            </div>
+          </div>
+
+          {/* User Info */}
+          <div className="space-y-8">
+            <h3 className="mb-5 w-fit border-b text-lg font-bold">
+              User Information
+            </h3>
+
+            <div className="space-y-4">
+              <div className="flex items-center gap-4 text-gray-500">
+                <span title="User">
+                  <User className="h-5 w-5" />
+                </span>
+                <span className="text-gray-800">{task.user || "----"}</span>
+              </div>
+
+              <div className="flex items-center gap-4 text-gray-500">
+                <span title="Phone">
+                  <Phone className="h-5 w-5" />
+                </span>
+                <span className="text-gray-800">{task?.phone || "----"}</span>
+              </div>
+
+              <div className="flex items-center gap-4 text-gray-500">
+                <span title="Assigned User">
+                  <UserCheckIcon className="h-5 w-5" />
+                </span>
+                <span className="text-gray-800">
+                  {task?.assignedToId || "----"}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Buttons */}
+        <div className="flex w-full justify-center border-t border-gray-200 bg-gray-50 px-4 py-4">
+          <button
+            onClick={() => setIsEditing(true)}
+            className="cursor-pointer rounded-md bg-blue-600 px-4 py-2 font-bold text-white hover:bg-blue-700"
+          >
+            Edit task
+          </button>
+        </div>
+      </div>
+    </>
+  );
+}

@@ -7,14 +7,18 @@ import { useRouter } from "next/navigation";
 export default function CreateTaskPage() {
   const ctx = api.useUtils();
   const router = useRouter();
-  const { mutate: createTask, isPending } = api.task.createTask.useMutation({
+  const {
+    mutate: createTask,
+    isPending,
+    error,
+  } = api.task.createTask.useMutation({
     onSuccess: () => {
       void ctx.task.getAllTasks.invalidate();
     },
   });
 
   const handleSubmit = (data: TaskFormData) => {
-    createTask({
+    const res = createTask({
       title: data.title,
       description: data.description,
       status: data.status,
@@ -23,7 +27,8 @@ export default function CreateTaskPage() {
       deadline: new Date(data.deadline).toDateString(),
       tags: data.tags,
     });
-    router.push("/");
+    console.log(error);
+    // if (res) router.push("/");
   };
 
   return (
