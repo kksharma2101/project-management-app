@@ -21,7 +21,7 @@ export default function LoginPage() {
 
     if (res?.ok) {
       router.push("/");
-      return <p>...loading</p>;
+      return <p>Loading...</p>;
     } else {
       alert("Invalid credentials");
     }
@@ -58,7 +58,7 @@ export default function LoginPage() {
           type="submit"
           className="cursor-pointer rounded-md bg-green-600 p-2 font-bold text-white hover:bg-green-500"
         >
-          {isLoading ? "Processing..." : "Login"}
+          {isLoading ? "Loging..." : "Login"}
         </button>
         <p className="mt-3 text-center text-xs text-gray-500">
           Don&apos;t have an account?

@@ -32,9 +32,7 @@ export default function TaskDetails({ task }: TaskDetailsProps) {
     error,
   } = api.task.updateTask.useMutation({
     onSuccess: () => {
-      api.task.getTask.useQuery({
-        id: task.id as string,
-      });
+      ctx.task.getTask.invalidate({ id: task.id });
     },
   });
 
@@ -51,7 +49,7 @@ export default function TaskDetails({ task }: TaskDetailsProps) {
       data: {
         title: data.title,
         description: data.description,
-        deadline: data.deadline,
+        deadline: new Date(data.deadline).toDateString(),
         status: data.status,
         priority: data.priority,
         tags: [data?.tags.toString()],
@@ -63,23 +61,15 @@ export default function TaskDetails({ task }: TaskDetailsProps) {
     }
   };
 
-  useEffect(() => {
-    if (isDeleting) router.push("/");
-  }, [isDeleting]);
+  // useEffect(() => {
+  //   router.push("/");
+  // }, [isDeleting]);
 
   if (isPending) {
     return (
       <p className="flex h-screen items-center justify-center">Loading...</p>
     );
   }
-
-  // if (!error) {
-  //   return (
-  //     <p className="flex h-screen items-center justify-center">
-  //       Error in updating task: {error}
-  //     </p>
-  //   );
-  // }
 
   return (
     <>
@@ -209,7 +199,9 @@ export default function TaskDetails({ task }: TaskDetailsProps) {
           </button>
 
           <button
-            onClick={() => deleteTask(task?.id)}
+            onClick={() => {
+              deleteTask(task?.id), router.push("/");
+            }}
             disabled={isDeleting}
             className="cursor-pointer rounded-md bg-red-600 px-4 py-2 font-bold text-white hover:bg-red-700"
           >

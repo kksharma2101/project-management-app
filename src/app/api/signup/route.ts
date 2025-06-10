@@ -1,4 +1,3 @@
-// app/api/signup/route.ts
 import { db } from "@/server/db"
 import { NextResponse } from "next/server"
 import bcrypt from "bcrypt"

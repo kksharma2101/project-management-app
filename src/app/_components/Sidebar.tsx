@@ -43,18 +43,20 @@ export default function Sidebar() {
   return (
     <>
       {/* Mobile menu button */}
-      <button
-        className={`${!mobileOpen && "fixed top-4 left-4 z-50 cursor-pointer rounded-md bg-white p-2 shadow-md md:hidden"}`}
-        onClick={toggleMobileSidebar}
-      >
-        {mobileOpen ? "" : <Menu size={20} />}
-      </button>
+      <div>
+        <button
+          className={`${!mobileOpen && "fixed top-4 left-4 z-50 cursor-pointer rounded-md bg-white p-2 shadow-md md:hidden"}`}
+          onClick={toggleMobileSidebar}
+        >
+          {mobileOpen ? "" : <Menu size={20} />}
+        </button>
+      </div>
 
       {/* Sidebar for mobile */}
       <div
         className={`fixed inset-0 z-40 h-full transform ${mobileOpen ? "translate-x-0" : "-translate-x-full"} transition-transform duration-300 ease-in-out md:hidden`}
       >
-        <div className="relative flex h-full w-full max-w-xs flex-col bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white shadow-xl">
+        <div className="relative flex h-full w-full max-w-xs flex-col bg-[#2e026d] text-white shadow-xl">
           <div className="flex h-16 items-center justify-between border-b border-gray-700 px-6">
             <h2 className="text-xl font-bold">Task-Manage</h2>
             <button onClick={toggleMobileSidebar}>
@@ -104,7 +106,7 @@ export default function Sidebar() {
 
       {/* Sidebar for desktop */}
       <div
-        className={`absolute left-0 z-50 hidden flex-col md:flex ${expanded ? "w-64" : "w-20"} h-full bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white transition-all duration-300`}
+        className={`absolute left-0 z-50 hidden flex-col md:flex ${expanded ? "w-64" : "w-20"} h-full bg-[#2e026d] text-white transition-all duration-300`}
       >
         <div className="flex h-16 items-center justify-between border-b border-gray-700 px-6">
           {expanded ? (
@@ -125,15 +127,17 @@ export default function Sidebar() {
             <Link
               key={item.name}
               href={item.href}
-              className={`flex items-center rounded-md px-4 py-3 text-sm ${
+              className={`flex items-center ${!expanded && "justify-center"} rounded-md px-4 py-3 text-sm ${
                 pathname === item.href
                   ? "bg-gray-900 text-white"
                   : "text-gray-300 hover:bg-gray-700"
               }`}
             >
-              <item.icon
-                className={`h-5 w-5 ${expanded ? "mr-3" : "mx-auto"}`}
-              />
+              <span title={item.name!}>
+                <item.icon
+                  className={`h-5 w-5 ${expanded ? "mr-3" : "mx-auto"}`}
+                />
+              </span>
               {expanded && item.name}
             </Link>
           ))}
