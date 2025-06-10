@@ -1,7 +1,10 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
+import { TRPCError } from "@trpc/server";
 
 export const taskRouter = createTRPCRouter({
+
+  // Create New Task
   createTask: protectedProcedure
     .input(z.object({
       title: z.string(),
@@ -9,7 +12,11 @@ export const taskRouter = createTRPCRouter({
       deadline: z.string(),
       status: z.enum(["PENDING", "IN_PROGRESS", "COMPLETED"]),
       priority: z.enum(["LOW", "MEDIUM", "HIGH"]),
-      tags: z.array(z.string()),
+      tags: z.array(z.string()).min(1),
+      // z.union([
+      //   z.array(z.string()),
+      //   z.string().transform(str => str.split('')),
+      // ]),
       assignedToId: z.string().optional(),
     }))
     .mutation(async ({ ctx, input }) => {
@@ -26,6 +33,7 @@ export const taskRouter = createTRPCRouter({
       });
     }),
 
+  // Fetch All Task
   getAllTasks: protectedProcedure.query(({ ctx }) => {
     return ctx.db.task.findMany({
       include: { assignedTo: true },
@@ -33,6 +41,7 @@ export const taskRouter = createTRPCRouter({
     });
   }),
 
+  // Fetch Single Task
   getTask: protectedProcedure.input(z.object({ id: z.string().cuid().or(z.string().uuid()) })).query(({ ctx, input }) => {
     return ctx.db.task.findUnique({
       where: {
@@ -41,6 +50,7 @@ export const taskRouter = createTRPCRouter({
     });
   }),
 
+  // Update Task
   updateTask: protectedProcedure
     .input(
       z.object({
@@ -52,6 +62,10 @@ export const taskRouter = createTRPCRouter({
           status: z.enum(["PENDING", "IN_PROGRESS", "COMPLETED"]),
           priority: z.enum(["LOW", "MEDIUM", "HIGH"]),
           tags: z.array(z.string()),
+          // z.union([
+          //   z.array(z.string()),
+          //   z.string().transform(str => str.split('')),
+          // ]),
           assignedToId: z.string().optional(),
         }),
       })
@@ -70,38 +84,27 @@ export const taskRouter = createTRPCRouter({
         },
       });
     }),
-  //     data: z.object({
-  //       title: z.string().min(1).optional(),
-  //       description: z.string().optional(),
-  //       status: z
-  //         .enum(["PENDING", "IN_PROGRESS", "COMPLETED"])
-  //         .optional(),
-  //       priority: z.enum(["LOW", "MEDIUM", "HIGH"]).optional(),
-  //       deadline: z.date().optional(),
-  //       tags: z.array(z.string()),
-  // assignedToId: z.string().optional(),
-  //     }),
-  //   })
-  // )
-  // .mutation(async ({ ctx, input }) => {
-  //   const { id, data } = input;
-  //   return ctx.db.task.update({
-  //     where: { id },
-  //     data: {
-  //       title: data.title,
-  //       description: data.description,
-  //       deadline: data.deadline,
-  //       status: data.status,
-  //       priority: data.priority,
-  //       tags: data.tags,
-  //       assignedToId: data.assignedToId,
-  //     },
 
-  //   });
-  // }),
-
+  // Delete Task
   deleteTask: protectedProcedure.input(z.string()).mutation(async ({ ctx, input }) => {
-    return ctx.db.task.delete({ where: { id: input } });
+    const task = await ctx.db.task.findUnique({
+      where: { id: input },
+    });
+
+    if (!task) {
+      throw new TRPCError({ code: 'NOT_FOUND' });
+    }
+
+    // Perform deletion
+    try {
+      return await ctx.db.task.delete({ where: { id: input } });
+    } catch (error) {
+      console.error('Failed to delete task:', error);
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Failed to delete task'
+      });
+    }
   }),
 
 });

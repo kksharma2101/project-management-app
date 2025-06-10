@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   User,
   Phone,
@@ -15,6 +15,7 @@ import {
 import type { TaskDetails, TaskFormData } from "@/types/task";
 import TaskForm from "./TaskForm";
 import { api } from "@/trpc/react";
+import { useRouter } from "next/navigation";
 
 interface TaskDetailsProps {
   task: TaskDetails;
@@ -22,14 +23,27 @@ interface TaskDetailsProps {
 
 export default function TaskDetails({ task }: TaskDetailsProps) {
   const [isEditing, setIsEditing] = useState(false);
+  const router = useRouter();
+  const ctx = api.useUtils();
 
-  // console.log(task.deadline.toLocaleDateString().replaceAll("/", ""));
-
-  const { mutate: updateTask, isPending } = api.task.updateTask.useMutation({
+  const {
+    mutate: updateTask,
+    isPending,
+    error,
+  } = api.task.updateTask.useMutation({
     onSuccess: () => {
-      void api.useUtils().task.getAllTasks.invalidate();
+      api.task.getTask.useQuery({
+        id: task.id as string,
+      });
     },
   });
+
+  const { mutate: deleteTask, isPending: isDeleting } =
+    api.task.deleteTask.useMutation({
+      onSuccess: () => {
+        void ctx.task.getAllTasks.invalidate();
+      },
+    });
 
   const handleSubmit = (data: TaskFormData) => {
     updateTask({
@@ -40,12 +54,32 @@ export default function TaskDetails({ task }: TaskDetailsProps) {
         deadline: data.deadline,
         status: data.status,
         priority: data.priority,
-        tags: data?.tags,
-        assignedToId: data.assignedToId,
+        tags: [data?.tags.toString()],
+        assignedToId: data?.assignedToId,
       },
     });
-    setIsEditing(false);
+    if (!error) {
+      setIsEditing(false);
+    }
   };
+
+  useEffect(() => {
+    if (isDeleting) router.push("/");
+  }, [isDeleting]);
+
+  if (isPending) {
+    return (
+      <p className="flex h-screen items-center justify-center">Loading...</p>
+    );
+  }
+
+  // if (!error) {
+  //   return (
+  //     <p className="flex h-screen items-center justify-center">
+  //       Error in updating task: {error}
+  //     </p>
+  //   );
+  // }
 
   return (
     <>
@@ -56,8 +90,8 @@ export default function TaskDetails({ task }: TaskDetailsProps) {
             description: task?.description ?? "",
             status: task?.status,
             priority: task?.priority,
-            deadline: new Date(task?.deadline).toLocaleString(),
-            tags: task?.tags ?? [],
+            deadline: task?.deadline.toLocaleString(),
+            tags: task?.tags,
             assignedToId: task?.assignedToId ?? undefined,
           }}
           onSubmit={handleSubmit}
@@ -166,12 +200,20 @@ export default function TaskDetails({ task }: TaskDetailsProps) {
         </div>
 
         {/* Buttons */}
-        <div className="flex w-full justify-center border-t border-gray-200 bg-gray-50 px-4 py-4">
+        <div className="flex w-full justify-center gap-5 border-t border-gray-200 bg-gray-50 px-4 py-4">
           <button
             onClick={() => setIsEditing(true)}
             className="cursor-pointer rounded-md bg-blue-600 px-4 py-2 font-bold text-white hover:bg-blue-700"
           >
             Edit task
+          </button>
+
+          <button
+            onClick={() => deleteTask(task?.id)}
+            disabled={isDeleting}
+            className="cursor-pointer rounded-md bg-red-600 px-4 py-2 font-bold text-white hover:bg-red-700"
+          >
+            {isDeleting ? "Deleting..." : "Delete"}
           </button>
         </div>
       </div>

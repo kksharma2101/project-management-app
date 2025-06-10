@@ -19,13 +19,16 @@ function page() {
   });
 
   if (isLoading || !taskId) {
-    // Also check for !taskId during initial render
-    return <div className="m-auto text-center">Loading task...</div>;
+    return (
+      <div className="flex h-screen items-center justify-center">
+        Loading task...
+      </div>
+    );
   }
 
   if (error) {
     return (
-      <div className="m-auto text-center">
+      <div className="flex h-screen items-center justify-center">
         Error loading task: {error.message}
       </div>
     );
@@ -33,7 +36,7 @@ function page() {
 
   if (!task) {
     return (
-      <div className="m-auto text-center">
+      <div className="flex h-screen items-center justify-center">
         Task with ID "{taskId}" not found.
       </div>
     );

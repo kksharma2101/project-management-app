@@ -7,17 +7,32 @@ import { api } from "@/trpc/react";
 
 export default function TaskTable() {
   const [view, setView] = useState<"table" | "card">("table");
-  const { data: tasks, isLoading } = api.task.getAllTasks.useQuery();
+  const { data: tasks, isPending, error } = api.task.getAllTasks.useQuery();
 
-  // const date = new Date().toLocaleDateString().replaceAll("/", "");
-  // console.log(date);
+  if (isPending) {
+    return (
+      <p className="flex h-screen items-center justify-center">Loading...</p>
+    );
+  }
 
-  if (isLoading) {
-    return <p className="m-auto text-center">Loading...</p>;
+  if (error) {
+    return (
+      <p className="flex h-screen items-center justify-center">
+        Error loading task: {error.message}
+      </p>
+    );
+  }
+
+  if (!tasks) {
+    return (
+      <p className="flex h-screen items-center justify-center">
+        Tasks is not found.
+      </p>
+    );
   }
 
   return (
-    <div className="mt-16 w-full md:mt-0">
+    <div className="mt-16 md:mt-0">
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-xl font-semibold">Recent Task</h2>
         <div className="flex space-x-2">
@@ -151,14 +166,14 @@ export default function TaskTable() {
                     {new Date(task.deadline).toLocaleString().split(",")[0]}
                   </td>
                   <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-500">
-                    {task.priority}
+                    {task?.priority}
                   </td>
                   <td className="px-6 py-4 text-[10px] whitespace-nowrap">
-                    {task.status}
+                    {task?.status}
                   </td>
                   <td className="px-6 py-4 text-right text-sm font-medium whitespace-nowrap">
                     <Link
-                      href={`/task/${task.id}`}
+                      href={`/task/${task?.id}`}
                       className="text-blue-600 hover:text-blue-900"
                     >
                       View
@@ -174,7 +189,7 @@ export default function TaskTable() {
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {tasks?.map((task) => (
             <Link
-              href={`/task/${task.id}`}
+              href={`/task/${task?.id}`}
               key={task?.id}
               className="flex cursor-pointer flex-col justify-between rounded-sm border p-4 shadow"
             >

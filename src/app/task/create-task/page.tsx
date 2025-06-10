@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 export default function CreateTaskPage() {
   const ctx = api.useUtils();
   const router = useRouter();
+
   const {
     mutate: createTask,
     isPending,
@@ -18,18 +19,31 @@ export default function CreateTaskPage() {
   });
 
   const handleSubmit = (data: TaskFormData) => {
-    const res = createTask({
+    createTask({
       title: data.title,
       description: data.description,
       status: data.status,
       priority: data.priority,
       assignedToId: data.assignedToId,
       deadline: new Date(data.deadline).toDateString(),
-      tags: data.tags,
+      tags: [data?.tags.toString()],
     });
-    console.log(error);
-    // if (res) router.push("/");
+    if (!error) router.push("/");
   };
+
+  if (isPending) {
+    return (
+      <p className="flex h-screen items-center justify-center">Loading...</p>
+    );
+  }
+
+  if (error) {
+    return (
+      <p className="flex h-screen items-center justify-center">
+        Error creating task: {error.message}
+      </p>
+    );
+  }
 
   return (
     <div className="mx-auto max-w-full px-5 md:ml-20">
@@ -37,7 +51,6 @@ export default function CreateTaskPage() {
         onSubmit={handleSubmit}
         isLoading={isPending}
         headingText="Create Task"
-        // onCancel={() => setIsOpen(false)}
         submitButtonText="Create Task"
       />
     </div>
