@@ -3,6 +3,7 @@ import TaskForm from "@/app/_components/TaskForm";
 import { api } from "@/trpc/react";
 import type { TaskFormData } from "@/types/task";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 export default function CreateTaskPage() {
   const ctx = api.useUtils();
@@ -16,6 +17,7 @@ export default function CreateTaskPage() {
     onSuccess: () => {
       void ctx.task.getAllTasks.invalidate();
     },
+    onError: () => toast.error("Something went wrong!"),
   });
 
   const handleSubmit = (data: TaskFormData) => {
@@ -28,7 +30,10 @@ export default function CreateTaskPage() {
       deadline: new Date(data.deadline).toDateString(),
       tags: [data?.tags.toString()],
     });
-    if (!error) router.push("/");
+    if (!error) {
+      toast.success("Task create successfully");
+      router.push("/");
+    }
   };
 
   if (isPending) {

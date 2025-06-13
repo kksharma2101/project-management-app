@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   User,
   Phone,
@@ -16,6 +16,7 @@ import type { TaskDetails, TaskFormData } from "@/types/task";
 import TaskForm from "./TaskForm";
 import { api } from "@/trpc/react";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 interface TaskDetailsProps {
   task: TaskDetails;
@@ -34,6 +35,7 @@ export default function TaskDetails({ task }: TaskDetailsProps) {
     onSuccess: () => {
       ctx.task.getTask.invalidate({ id: task.id });
     },
+    onError: () => toast.error("Something wrong update task"),
   });
 
   const { mutate: deleteTask, isPending: isDeleting } =
@@ -41,6 +43,7 @@ export default function TaskDetails({ task }: TaskDetailsProps) {
       onSuccess: () => {
         void ctx.task.getAllTasks.invalidate();
       },
+      onError: () => toast.error("Something  wrong delete task"),
     });
 
   const handleSubmit = (data: TaskFormData) => {
@@ -59,6 +62,7 @@ export default function TaskDetails({ task }: TaskDetailsProps) {
     if (!error) {
       setIsEditing(false);
     }
+    toast.success("Task Update successfully");
   };
 
   // useEffect(() => {
@@ -200,7 +204,9 @@ export default function TaskDetails({ task }: TaskDetailsProps) {
 
           <button
             onClick={() => {
-              deleteTask(task?.id), router.push("/");
+              deleteTask(task?.id),
+                router.push("/"),
+                toast.success("Task Deleted");
             }}
             disabled={isDeleting}
             className="cursor-pointer rounded-md bg-red-600 px-4 py-2 font-bold text-white hover:bg-red-700"

@@ -7,6 +7,7 @@ import { TRPCReactProvider } from "@/trpc/react";
 import { SessionProvider } from "next-auth/react";
 import { auth } from "@/server/auth";
 import Sidebar from "./_components/Sidebar";
+import { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
   title: "Project Management App",
@@ -29,8 +30,9 @@ export default async function RootLayout({
       <body>
         <TRPCReactProvider>
           <SessionProvider session={session}>
+            <Toaster />
             <div className="flex h-screen bg-gray-50">
-              {session && <Sidebar />}
+              {session?.user && <Sidebar />}
               <main className="flex-1 overflow-auto">{children}</main>
             </div>
           </SessionProvider>
