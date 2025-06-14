@@ -17,6 +17,7 @@ import TaskForm from "./TaskForm";
 import { api } from "@/trpc/react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import Button from "./ui_components/Button";
 
 interface TaskDetailsProps {
   task: TaskDetails;
@@ -61,13 +62,9 @@ export default function TaskDetails({ task }: TaskDetailsProps) {
     });
     if (!error) {
       setIsEditing(false);
+      toast.success("Task Update successfully");
     }
-    toast.success("Task Update successfully");
   };
-
-  // useEffect(() => {
-  //   router.push("/");
-  // }, [isDeleting]);
 
   if (isPending) {
     return (
@@ -195,24 +192,19 @@ export default function TaskDetails({ task }: TaskDetailsProps) {
 
         {/* Buttons */}
         <div className="flex w-full justify-center gap-5 border-t border-gray-200 bg-gray-50 px-4 py-4">
-          <button
-            onClick={() => setIsEditing(true)}
-            className="cursor-pointer rounded-md bg-blue-600 px-4 py-2 font-bold text-white hover:bg-blue-700"
-          >
-            Edit task
-          </button>
+          <Button children="Edit Task" onClick={() => setIsEditing(true)} />
 
-          <button
+          <Button
+            children="Delete"
+            isLoading={isDeleting}
+            variant="danger"
             onClick={() => {
               deleteTask(task?.id),
                 router.push("/"),
                 toast.success("Task Deleted");
             }}
             disabled={isDeleting}
-            className="cursor-pointer rounded-md bg-red-600 px-4 py-2 font-bold text-white hover:bg-red-700"
-          >
-            {isDeleting ? "Deleting..." : "Delete"}
-          </button>
+          />
         </div>
       </div>
     </>

@@ -6,8 +6,9 @@ import { Geist } from "next/font/google";
 import { TRPCReactProvider } from "@/trpc/react";
 import { SessionProvider } from "next-auth/react";
 import { auth } from "@/server/auth";
-import Sidebar from "./_components/Sidebar";
 import { Toaster } from "react-hot-toast";
+import { cache } from "react";
+import SidebarWrapper from "./_components/SidebarWrapper";
 
 export const metadata: Metadata = {
   title: "Project Management App",
@@ -23,7 +24,9 @@ const geist = Geist({
 export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const session = await auth();
+  const getSession = cache(() => auth());
+  // cache is Reduces duplicate async calls to auth() when RootLayout re-renders. and Improves performance during SSR and RSC hydration.
+  const session = await getSession();
 
   return (
     <html lang="en" className={`${geist.variable}`}>
@@ -32,7 +35,7 @@ export default async function RootLayout({
           <SessionProvider session={session}>
             <Toaster />
             <div className="flex h-screen bg-gray-50">
-              {session! && <Sidebar />}
+              <SidebarWrapper />
               <main className="flex-1 overflow-auto">{children}</main>
             </div>
           </SessionProvider>

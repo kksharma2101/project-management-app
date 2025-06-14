@@ -2,17 +2,22 @@
 import { useForm } from "react-hook-form";
 import type { TaskFormData } from "@/types/task";
 import { api } from "@/trpc/react";
-
-//
+import InputField from "./ui_components/InputField";
+import Button from "./ui_components/Button";
 
 type TaskFormBaseProps = {
   defaultValues?: Partial<TaskFormData>;
   onSubmit: (data: TaskFormData) => void;
   isLoading: boolean;
-  // onCancel?: () => void;
   submitButtonText?: string;
   headingText: string;
 };
+
+const fields = [
+  { id: "title", label: "Title", type: "text" },
+  { id: "tags", label: "Tags", type: "text" },
+  { id: "deadline", label: "Deadline", type: "datetime-local" },
+];
 
 export default function TaskForm({
   defaultValues,
@@ -26,7 +31,7 @@ export default function TaskForm({
   const {
     register,
     handleSubmit,
-    formState: {},
+    formState: { errors },
   } = useForm<TaskFormData>({
     defaultValues: {
       ...defaultValues,
@@ -39,42 +44,23 @@ export default function TaskForm({
         {headingText}
       </h1>
       <div className="mx-auto flex flex-col items-start justify-center gap-12 sm:grid sm:grid-cols-2 lg:grid-cols-3">
-        <div className="w-full">
-          <label htmlFor="title">Task Title:</label>
-          <input
-            {...register("title")}
-            className="mt-1 w-full rounded-sm border-1 border-black p-2"
+        {/* Use InputFiels Components */}
+        {fields.map(({ id, label, type }) => (
+          <InputField
+            key={id}
+            id={id}
+            label={label}
+            type={type}
+            error={errors[id as keyof typeof errors]?.message}
+            {...register(id as keyof TaskFormData)}
           />
-        </div>
-
-        <div className="w-full">
-          <label htmlFor="deadline">Deadline:</label>
-          <input
-            required
-            type="datetime-local"
-            {...register("deadline")}
-            defaultValue={
-              defaultValues?.deadline
-                ? new Date(defaultValues.deadline).toDateString()
-                : undefined
-            }
-            className="mt-1 w-full cursor-pointer rounded-sm border-1 border-black p-2"
-          />
-        </div>
-
-        <div className="w-full">
-          <label htmlFor="tags">Tags, comma-separated: </label>
-          <input
-            {...register("tags")}
-            className="mt-1 w-full rounded-sm border-1 border-black p-2"
-          />
-        </div>
+        ))}
 
         <div className="w-full">
           <label htmlFor="assignedToId">Select User:</label>
           <select
             {...register("assignedToId")}
-            className="mt-1 w-full cursor-pointer rounded-sm border-1 border-black p-2"
+            className="w-full rounded-lg border px-4 py-2 shadow-sm transition duration-150 ease-in-out focus:border-transparent focus:ring-2 focus:ring-blue-500"
           >
             {user?.map((item) => (
               <option value={item?.id} key={item.id}>
@@ -88,7 +74,7 @@ export default function TaskForm({
           <label htmlFor="status">Status:</label>
           <select
             {...register("status")}
-            className="mt-1 w-full cursor-pointer rounded-sm border-1 border-black p-2"
+            className="w-full rounded-lg border px-4 py-2 shadow-sm transition duration-150 ease-in-out focus:border-transparent focus:ring-2 focus:ring-blue-500"
           >
             <option value="PENDING">Pending</option>
             <option value="IN_PROGRESS">IN_Progress</option>
@@ -100,7 +86,7 @@ export default function TaskForm({
           <label htmlFor="priority">Priority:</label>
           <select
             {...register("priority")}
-            className="mt-1 w-full cursor-pointer rounded-sm border-1 border-black p-2"
+            className="w-full rounded-lg border px-4 py-2 shadow-sm transition duration-150 ease-in-out focus:border-transparent focus:ring-2 focus:ring-blue-500"
           >
             <option value="LOW">Low</option>
             <option value="MEDIUM">Medium</option>
@@ -112,20 +98,18 @@ export default function TaskForm({
           <label htmlFor="description">Description:</label>
           <textarea
             {...register("description")}
-            className="mt-1 w-full rounded-sm border-1 border-black p-2"
+            className="w-full rounded-lg border px-4 py-2 shadow-sm transition duration-150 ease-in-out focus:border-transparent focus:ring-2 focus:ring-blue-500"
           />
         </div>
       </div>
 
       {/* Button Actions */}
       <div className="flex justify-end space-x-3 pt-4">
-        <button
+        <Button
           type="submit"
-          className="cursor-pointer rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
-          disabled={isLoading}
-        >
-          {isLoading ? "Processing..." : submitButtonText}
-        </button>
+          isLoading={isLoading}
+          children={submitButtonText}
+        />
       </div>
     </form>
   );

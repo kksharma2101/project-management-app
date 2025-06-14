@@ -3,6 +3,14 @@ import { useForm } from "react-hook-form";
 import { api } from "@/trpc/react";
 import { useEffect, useState } from "react";
 import type { UserDetails } from "@/types/task";
+import Button from "./ui_components/Button";
+import InputField from "./ui_components/InputField";
+
+const userFields = [
+  { id: "name", label: "Name", type: "text" },
+  { id: "phone", label: "Phone Number", type: "text" },
+  { id: "about", label: "About", type: "text" },
+];
 
 export default function UserProfileForm() {
   const { register, handleSubmit, reset } = useForm();
@@ -14,6 +22,7 @@ export default function UserProfileForm() {
     if (user) {
       reset({
         name: user?.name,
+        phone: user?.phone,
         bio: user.bio ?? "",
       });
     }
@@ -31,12 +40,26 @@ export default function UserProfileForm() {
       <h1 className="mx-auto my-10 text-center text-2xl font-bold">
         Your Profile
       </h1>
-      <div className="flex flex-col items-start justify-center gap-4">
+      <div className="">
         <h2>
           <span className="pr-2 font-bold">Email: </span>
           {user?.email}
         </h2>
-        <div
+
+        <div className="grid grid-cols-2">
+          {userFields.map((val) => (
+            <InputField
+              id={val.id}
+              key={val.id}
+              type={val.type}
+              label={val.label}
+              {...register(val.id)}
+              className={`mx-auto w-full rounded-sm p-2 ${isUpdate ? "border-1 border-black" : "read-only border-none"}`}
+            />
+          ))}
+        </div>
+
+        {/* <div
           className={`w-full ${!isUpdate ? "flex items-baseline" : "block"}`}
         >
           <label htmlFor="name" className="font-bold">
@@ -59,29 +82,27 @@ export default function UserProfileForm() {
             placeholder="Bio"
             className={`w-full rounded-sm p-2 ${isUpdate ? "border-1 border-black" : ""}`}
           />
-        </div>
+        </div> */}
 
         {!isUpdate ? (
-          <span
-            className="mx-auto mt-5 w-fit cursor-pointer rounded-sm bg-blue-500 px-4 py-1 font-bold text-white hover:bg-blue-400"
+          <Button
+            children="Edit Profile"
             onClick={() => setUpdate(true)}
-          >
-            Update
-          </span>
+            className="mx-auto"
+          />
         ) : (
           <div className="mx-auto flex items-center gap-5">
-            <span
-              className="mx-auto mt-5 w-fit cursor-pointer rounded-sm bg-red-500 px-4 py-1 font-bold text-white hover:bg-red-400"
+            <Button
+              children="Cancel"
               onClick={() => setUpdate(false)}
-            >
-              Cancel
-            </span>
-            <button
+              variant="danger"
+            />
+
+            <Button
+              children="Update"
               type={!isUpdate ? "button" : "submit"}
-              className="mt-5 w-fit cursor-pointer rounded-sm bg-blue-500 px-4 py-1 font-bold text-white hover:bg-blue-400"
-            >
-              {!isUpdate ? (isLoading ? "Updating..." : "") : "Update"}
-            </button>
+              isLoading={isLoading}
+            />
           </div>
         )}
       </div>

@@ -17,10 +17,19 @@ import {
 } from "lucide-react";
 import { useSession } from "next-auth/react";
 
+const navigation = [
+  { name: "Home", href: "/", icon: Home },
+  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { name: "Add Task", href: "/task/create-task", icon: Tags },
+  { name: "About", href: "/about", icon: LocateIcon },
+  { name: "Contact", href: "/contact", icon: Contact2Icon },
+  { name: "Settings", href: "/settings/profile", icon: Settings },
+];
+
 export default function Sidebar() {
   const [expanded, setExpanded] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const pathname = usePathname();
 
   const toggleSidebar = () => {
@@ -31,14 +40,7 @@ export default function Sidebar() {
     setMobileOpen(!mobileOpen);
   };
 
-  const navigation = [
-    { name: "Home", href: "/", icon: Home },
-    { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-    { name: "Add Task", href: "/task/create-task", icon: Tags },
-    { name: "About", href: "/about", icon: LocateIcon },
-    { name: "Contact", href: "/contact", icon: Contact2Icon },
-    { name: "Settings", href: "/settings/profile", icon: Settings },
-  ];
+  if (status === "loading") return null;
 
   return (
     <>

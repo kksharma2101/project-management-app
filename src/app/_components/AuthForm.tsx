@@ -1,11 +1,12 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
 import { toast } from "react-hot-toast";
-import { signIn } from "next-auth/react";
+import { getSession, signIn } from "next-auth/react";
 import InputField from "./ui_components/InputField";
+import Button from "./ui_components/Button";
 
 type AuthFormProps = {
   type: "signup" | "login";
@@ -19,6 +20,14 @@ export default function AuthForm({ type }: AuthFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
+  useEffect(() => {
+    async function checkSession() {
+      const session = await getSession();
+      if (session) router.push("/");
+    }
+    checkSession();
+  }, [router]);
+
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -31,12 +40,13 @@ export default function AuthForm({ type }: AuthFormProps) {
             ...formData,
           }),
         });
+        const data = await res.json();
 
         if (res.ok) {
           toast.success("Signup Seccessfully");
           router.push("/login");
         } else {
-          toast.error("Failed to sign up, try again");
+          toast.error(data.message);
         }
         // login
       } else {
@@ -44,8 +54,7 @@ export default function AuthForm({ type }: AuthFormProps) {
           redirect: false,
           ...formData,
         });
-
-        if (res?.ok) {
+        if (res?.error === null) {
           toast.success("Login Successfull");
           router.push("/");
         } else {
@@ -88,6 +97,7 @@ export default function AuthForm({ type }: AuthFormProps) {
                 }
                 required
                 aria-label="Enter your email"
+                maxLength={val == "phone" ? 10 : undefined}
               />
             </div>
           ) : (
@@ -124,7 +134,7 @@ export default function AuthForm({ type }: AuthFormProps) {
             <input
               type={showPassword ? "text" : "password"}
               id="password"
-              className="w-full rounded-lg border border-gray-300 px-4 py-2 pr-10 shadow-sm transition duration-150 ease-in-out focus:border-transparent focus:ring-2 focus:ring-blue-500" // Removed text-center
+              className="w-full rounded-lg border border-gray-300 px-4 py-2 pr-10 shadow-sm transition duration-150 ease-in-out focus:border-transparent focus:ring-2 focus:ring-blue-500"
               value={formData["password"] || ""}
               onChange={(e) =>
                 setFormData((prev) => ({
@@ -151,12 +161,14 @@ export default function AuthForm({ type }: AuthFormProps) {
         </div>
 
         {/* Auth Button */}
-        <button
+        <Button
+          isLoading={isLoading}
           type="submit"
-          className="w-full cursor-pointer rounded-lg bg-blue-600 py-2.5 text-lg font-semibold text-white shadow-md transition duration-150 ease-in-out hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
-        >
-          {isLoading ? "Proccessing" : type == "signup" ? "Sign Up" : "Log In"}
-        </button>
+          className="w-full"
+          children={
+            isLoading ? "Proccessing" : type == "signup" ? "Sign Up" : "Log In"
+          }
+        />
       </form>
 
       {/* Navigation Link */}
