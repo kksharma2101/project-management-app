@@ -50,6 +50,7 @@ export default function TaskForm({
         <div className="w-full">
           <label htmlFor="deadline">Deadline:</label>
           <input
+            required
             type="datetime-local"
             {...register("deadline")}
             defaultValue={

@@ -5,64 +5,30 @@ import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { signIn } from "next-auth/react";
+import InputField from "./ui_components/InputField";
 
-export default function AuthForm({ type }: string | any) {
+type AuthFormProps = {
+  type: "signup" | "login";
+};
+
+const inputFields = ["name", "email", "phone"];
+
+export default function AuthForm({ type }: AuthFormProps) {
   const router = useRouter();
+  const [formData, setFormData] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [password, setPassword] = useState("");
-  const [countryCode, setCountryCode] = useState("+91"); // New state for country code, default to +1
   const [showPassword, setShowPassword] = useState(false);
-  const [phoneError, setPhoneError] = useState("");
-  const [countryCodeError, setCountryCodeError] = useState("");
 
-  const validatePhone = (inputPhone: string) => {
-    // Basic phone number validation: digits only, and between 7 to 15 digits
-    const phoneRegex = /^\d{0,10}$/;
-    if (!phoneRegex.test(inputPhone) && inputPhone.length > 0) {
-      setPhoneError("Please enter a valid phone number (0-10 digits).");
-      return false;
-    }
-    setPhoneError("");
-    return true;
-  };
-
-  const validateCountryCode = (inputCode: string) => {
-    // Basic country code validation: starts with '+', followed by 1 to 4 digits
-    const codeRegex = /^\+\d{1,4}$/;
-    if (!codeRegex.test(inputCode) && inputCode.length > 0) {
-      setCountryCodeError(
-        'Country code must start with "+" and have 1-4 digits.',
-      );
-      return false;
-    }
-    setCountryCodeError("");
-    return true;
-  };
-
-  const handleSignup = async (e: React.FormEvent) => {
+  const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       setIsLoading(true);
       if (type == "signup") {
-        const isPhoneValid = validatePhone(phone);
-        const isCountryCodeValid = validateCountryCode(countryCode);
-
-        if (!isPhoneValid || !isCountryCodeValid) {
-          toast.error("fix phone or country code errors before submitting.");
-          return;
-        }
-
         const res = await fetch("/api/signup", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            email,
-            password,
-            name,
-            phone: { countryCode, phone },
+            ...formData,
           }),
         });
 
@@ -70,20 +36,18 @@ export default function AuthForm({ type }: string | any) {
           toast.success("Signup Seccessfully");
           router.push("/login");
         } else {
-          // const data = await res.json();
           toast.error("Failed to sign up, try again");
         }
+        // login
       } else {
         const res = await signIn("credentials", {
           redirect: false,
-          email,
-          password,
+          ...formData,
         });
 
         if (res?.ok) {
           toast.success("Login Successfull");
           router.push("/");
-          return <p>Loading...</p>;
         } else {
           toast.error("Invalid credentials");
         }
@@ -106,104 +70,47 @@ export default function AuthForm({ type }: string | any) {
         {type == "signup" ? "Sign up" : "Log in"}
       </h1>
 
-      <form onSubmit={handleSignup} className="space-y-4">
-        {/* Name Input */}
-        {type == "signup" && (
-          <div>
-            <label
-              htmlFor="name"
-              className="mb-1 block text-sm font-medium text-gray-700"
-            >
-              Name
-            </label>
-            <input
-              type="text"
-              id="name"
-              className="w-full rounded-lg border border-blue-400 px-4 py-2 shadow-sm transition duration-150 ease-in-out focus:border-transparent focus:ring-2 focus:ring-blue-500" // Removed text-center
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-              aria-label="Enter your name"
-            />
-          </div>
-        )}
-
-        {/* Email Input */}
-        <div>
-          <label
-            htmlFor="email"
-            className="mb-1 block text-sm font-medium text-gray-700"
-          >
-            Email
-          </label>
-          <input
-            type="email"
-            id="email"
-            className="w-full rounded-lg border border-gray-300 px-4 py-2 shadow-sm transition duration-150 ease-in-out focus:border-transparent focus:ring-2 focus:ring-blue-500" // Removed text-center
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            aria-label="Enter your email"
-          />
-        </div>
-
-        {/* Phone Input with Country Code */}
-        {type == "signup" && (
-          <div>
-            <label
-              htmlFor="phone"
-              className="mb-1 block text-sm font-medium text-gray-700"
-            >
-              Phone Number
-            </label>
-            <div className="flex space-x-2">
-              <div className="w-1/4">
-                {" "}
-                {/* Fixed width for country code */}
-                <input
-                  type="tel" // Use tel for telephone numbers
-                  id="countryCode"
-                  className={`w-full rounded-lg border px-4 py-2 shadow-sm transition duration-150 ease-in-out focus:border-transparent focus:ring-2 focus:ring-blue-500 ${countryCodeError ? "border-red-500" : "border-gray-300"}`}
-                  value={countryCode}
-                  onChange={(e) => {
-                    setCountryCode(e.target.value);
-                    validateCountryCode(e.target.value);
-                  }}
-                  onBlur={(e) => validateCountryCode(e.target.value)}
-                  required
-                  aria-label="Enter country code"
-                  placeholder="+1"
-                />
-                {countryCodeError && (
-                  <p className="mt-1 text-xs text-red-500">
-                    {countryCodeError}
-                  </p>
-                )}
-              </div>
-              <div className="flex-1">
-                {" "}
-                {/* Takes remaining width for phone number */}
-                <input
-                  type="tel" // Use tel for telephone numbers
-                  id="phone"
-                  className={`w-full rounded-lg border px-4 py-2 shadow-sm transition duration-150 ease-in-out focus:border-transparent focus:ring-2 focus:ring-blue-500 ${phoneError ? "border-red-500" : "border-gray-300"}`}
-                  value={phone}
-                  onChange={(e) => {
-                    setPhone(e.target.value);
-                    validatePhone(e.target.value);
-                  }}
-                  onBlur={(e) => validatePhone(e.target.value)}
-                  required
-                  aria-label="Enter phone number"
-                  placeholder="e.g., 555-123-4567"
-                />
-                {phoneError && (
-                  <p className="mt-1 text-xs text-red-500">{phoneError}</p>
-                )}
-              </div>
+      <form onSubmit={handleAuth} className="space-y-4">
+        {/* Use Input Component */}
+        {inputFields.map((val) => {
+          return type == "signup" ? (
+            <div key={val}>
+              <InputField
+                type={val}
+                id={val}
+                label={val}
+                value={formData[val] || ""}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    [val]: e.target.value,
+                  }))
+                }
+                required
+                aria-label="Enter your email"
+              />
             </div>
-          </div>
-        )}
+          ) : (
+            val == "email" && (
+              <div key={val}>
+                <InputField
+                  type={val}
+                  id={val}
+                  label={val.toUpperCase()}
+                  value={formData[val] || ""}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      [val]: e.target.value,
+                    }))
+                  }
+                  required
+                  aria-label="Enter your email"
+                />
+              </div>
+            )
+          );
+        })}
 
         {/* Password Input */}
         <div>
@@ -218,8 +125,13 @@ export default function AuthForm({ type }: string | any) {
               type={showPassword ? "text" : "password"}
               id="password"
               className="w-full rounded-lg border border-gray-300 px-4 py-2 pr-10 shadow-sm transition duration-150 ease-in-out focus:border-transparent focus:ring-2 focus:ring-blue-500" // Removed text-center
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={formData["password"] || ""}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  password: e.target.value,
+                }))
+              }
               required
               aria-label="Enter your password"
             />
@@ -243,9 +155,7 @@ export default function AuthForm({ type }: string | any) {
           type="submit"
           className="w-full cursor-pointer rounded-lg bg-blue-600 py-2.5 text-lg font-semibold text-white shadow-md transition duration-150 ease-in-out hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
         >
-          {type == "signup"
-            ? `${isLoading ? "Processing" : "Sign Up"}`
-            : "Log in"}
+          {isLoading ? "Proccessing" : type == "signup" ? "Sign Up" : "Log In"}
         </button>
       </form>
 
