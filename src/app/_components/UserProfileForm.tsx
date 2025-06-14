@@ -1,15 +1,17 @@
 "use client";
+
 import { useForm } from "react-hook-form";
 import { api } from "@/trpc/react";
 import { useEffect, useState } from "react";
 import type { UserDetails } from "@/types/task";
 import Button from "./ui_components/Button";
 import InputField from "./ui_components/InputField";
+import toast from "react-hot-toast";
 
 const userFields = [
   { id: "name", label: "Name", type: "text" },
   { id: "phone", label: "Phone Number", type: "text" },
-  { id: "about", label: "About", type: "text" },
+  { id: "bio", label: "About", type: "text" },
 ];
 
 export default function UserProfileForm() {
@@ -29,61 +31,50 @@ export default function UserProfileForm() {
   }, [user, reset]);
 
   const onSubmit = (data: UserDetails) => {
-    updateProfile.mutate({ name: data.name!, bio: data.bio! });
+    updateProfile.mutate({
+      name: data.name!,
+      bio: data.bio!,
+      phone: data.phone,
+    });
+    toast.success("Profile Updated");
     setUpdate(false);
   };
 
-  if (isLoading) return <p className="mt-20 text-center">Loading...</p>;
+  if (isLoading)
+    return (
+      <p className="flex h-screen items-center justify-center">Loading...</p>
+    );
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="mx-auto">
       <h1 className="mx-auto my-10 text-center text-2xl font-bold">
         Your Profile
       </h1>
-      <div className="">
-        <h2>
-          <span className="pr-2 font-bold">Email: </span>
-          {user?.email}
+      <div className="gap-5 sm:grid sm:grid-cols-2">
+        <h2 className="mb-4">
+          <span className="block text-sm font-bold text-gray-700">Email: </span>
+          <span className="pl-2">{user?.email}</span>
         </h2>
 
-        <div className="grid grid-cols-2">
-          {userFields.map((val) => (
+        {userFields.map((val) => (
+          <div
+            key={val.id}
+            className={`mb-4 w-full ${!isUpdate ? "flex items-baseline justify-start" : "block"}`}
+          >
             <InputField
               id={val.id}
-              key={val.id}
               type={val.type}
+              disabled={!isUpdate}
               label={val.label}
               {...register(val.id)}
-              className={`mx-auto w-full rounded-sm p-2 ${isUpdate ? "border-1 border-black" : "read-only border-none"}`}
+              className={`w-full rounded-sm p-2 text-justify ${isUpdate ? "border-1 border-black" : ""}`}
+              maxLength={val.id == "phone" ? 10 : undefined}
             />
-          ))}
-        </div>
+          </div>
+        ))}
+      </div>
 
-        {/* <div
-          className={`w-full ${!isUpdate ? "flex items-baseline" : "block"}`}
-        >
-          <label htmlFor="name" className="font-bold">
-            Name:
-          </label>
-          <input
-            {...register("name")}
-            placeholder="Your Name"
-            className={`w-full rounded-sm p-2 ${isUpdate ? "border-1 border-black" : ""}`}
-          />
-        </div>
-        <div
-          className={`w-full ${!isUpdate ? "flex items-baseline" : "block"}`}
-        >
-          <label htmlFor="bio" className="font-bold">
-            About:
-          </label>
-          <textarea
-            {...register("bio")}
-            placeholder="Bio"
-            className={`w-full rounded-sm p-2 ${isUpdate ? "border-1 border-black" : ""}`}
-          />
-        </div> */}
-
+      <div className="mt-5 flex w-full items-center justify-center">
         {!isUpdate ? (
           <Button
             children="Edit Profile"

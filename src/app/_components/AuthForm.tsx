@@ -54,6 +54,7 @@ export default function AuthForm({ type }: AuthFormProps) {
           redirect: false,
           ...formData,
         });
+        
         if (res?.error === null) {
           toast.success("Login Successfull");
           router.push("/");

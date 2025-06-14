@@ -15,6 +15,7 @@ export interface UserDetails {
     id?: string,
     name?: string,
     email?: string,
+    phone?: string,
     password?: string,
     bio?: string | null,
     emailVerified?: Date,

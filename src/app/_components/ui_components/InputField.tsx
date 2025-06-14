@@ -17,9 +17,9 @@ const InputField: React.FC<InputFieldProps> = ({
     <div>
       <label
         htmlFor={id}
-        className="mb-1 block text-sm font-medium text-gray-700 capitalize"
+        className="mb-1 block text-sm font-bold text-gray-700 capitalize"
       >
-        {label}
+        {label}:
       </label>
       <input
         id={id}
